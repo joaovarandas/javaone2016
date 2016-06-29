@@ -1,1 +1,7 @@
 Projeto apresentado no JavaOne2016
+
+O arquivo "countries.js" deve ser colocado na sua pasta home, em uma pasta chamada "nashorn-js".
+Ou, modifique o NashornScriptFactory para buscar os arquivos js em outra pasta.
+
+
+
