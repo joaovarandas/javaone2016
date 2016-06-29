@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" data-ng-app="basic">
+<head>
+	<meta charset="utf-8">
+	<title>Nashorn and AngularJS MVC</title>
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic">
+	<style type="text/css">
+	body {
+		padding: 25px;
+	}
+	</style>
+</head>
+
+<body>
+	<div class="container"  data-ng-controller="BasicController">
+		<table class="table table-striped table-bordered">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Abrev</th>
+					<th>Country Code</th>
+					<th>&nbsp;</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr data-ng-repeat="row in data">
+					<td data-ng-bind="row.name"></td>
+					<td data-ng-bind="row.abrev"></td>
+					<td data-ng-bind="row.countryCode"></td>
+					<td>
+						<button class="btn btn-sm btn-danger" data-ng-click="remove($index);"><i class="fa fa-fw fa-trash-o"></i></button>
+					</td>
+				</tr>
+			</tbody>
+			<tfoot>
+				<tr>
+					<td><input type="text" class="input-sm form-control" data-ng-model="edit.name"/></td>
+					<td><input type="text" class="input-sm form-control" data-ng-model="edit.abrev"/></td>
+					<td><input type="text" class="input-sm form-control" data-ng-model="edit.countryCode"/></td>
+
+					<td>
+						<button class="btn btn-sm btn-success" data-ng-click="insert(edit);"><i class="fa fa-fw fa-asterisk"></i></button>
+					</td>
+				</tr>
+			</tfoot>
+
+		
+		</table>
+	</div>
+
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.2/angular.min.js"></script>
+	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+	<script>
+	(function() {
+		var nashorn = angular.module('basic', []);		  
+		nashorn.controller('BasicController', ['$scope', '$http', function($scope, $http) {		
+			$scope.data = [];
+			$scope.edit = {};
+			
+			$scope.insert = function(what) {
+				$http.post("/invoker/countries", {
+						"fn": "insert",
+						"data": what
+					}).success(doCallback);				
+			};
+			
+			$scope.remove = function(index) {
+				$http.post("/invoker/countries", {
+						"fn": "remove",
+						"data": { "index": index } 
+					}).success(doCallback);				
+			};
+
+			$scope.find = function() {
+				$http.get("/invoker/countries?fn=find").success(function(data) {
+					$scope.data = data;
+				});
+			};
+			
+			function doCallback(response) {
+				alert(response.message);
+				
+				$scope.edit = {};
+				$scope.find();
+			}
+			
+			$scope.find();
+			
+		}]);
+	})();	
+	</script>
+	  
+</body>
+</html>
